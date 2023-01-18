@@ -1,5 +1,8 @@
 package htlgkr.pos.huerecords;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -17,18 +20,22 @@ public class Main {
     private static Scanner input = new Scanner(System.in);
 
     public static void main(String[] args){
+        boolean needToSave = false;
         int choice;
         do{
             choice = showMenu();
             switch (choice){
                 case 1:
                     addNewPerson();
+                    needToSave = true;
                     break;
                 case 2:
                     editPerson();
+                    needToSave = true;
                     break;
                 case 3:
                     deletePerson();
+                    needToSave = true;
                     break;
                 case 4:
                     List<Person> matches = searchPerson();
@@ -45,6 +52,14 @@ public class Main {
                 case 6:
                     analytics();
                     break;
+            }
+            if (needToSave){
+                try {
+                    MyFileFormatWriter myFileFormatWriter = new MyFileFormatWriter(persons, new FileOutputStream("savedPersons.txt"));
+                    myFileFormatWriter.save();
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }while (choice != 7);
     }
